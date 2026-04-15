@@ -1,8 +1,8 @@
+'use client';
 import { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebouncedCallback } from 'use-debounce';
-
-import { fetchNotes } from '../../services/noteService';
+import { fetchNotes } from '../../services/noteService'; 
 import NoteList from '../NoteList/NoteList';
 import SearchBox from '../SearchBox/SearchBox';
 import Pagination from '../Pagination/Pagination';
@@ -35,7 +35,7 @@ const App = () => {
       <header className={css.toolbar}>
         <SearchBox 
           value={inputValue} 
-          onChange={(val) => {
+          onChange={(val: string) => {
             setInputValue(val);
             handleSearchChange(val);
           }} 
@@ -45,7 +45,7 @@ const App = () => {
           <Pagination 
             totalPages={data.totalPages} 
             currentPage={page} 
-            onChange={(p) => setPage(p.selected + 1)} 
+            onChange={(p: { selected: number }) => setPage(p.selected + 1)} 
           />
         )}
 
@@ -56,7 +56,7 @@ const App = () => {
 
       <main className={css.main}>
         {isLoading && <p className={css.message}>Loading notes...</p>}
-        {isError && <p className={css.error}>Error loading notes. Please try again later.</p>}
+        {isError && <p className={css.error}>Error loading notes.</p>}
         
         {data && data.notes.length > 0 ? (
           <NoteList notes={data.notes} />
