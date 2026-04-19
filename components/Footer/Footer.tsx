@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className={css.footer}>
       <p suppressHydrationWarning>
-        © {new Date().getFullYear()} NoteHub. Developer: Your Name
+        © {new Date().getFullYear()} NoteHub. Developer: Maksym Senko
       </p>
     </footer>
   );
