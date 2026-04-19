@@ -1,0 +1,90 @@
+.main {
+  min-height: 100vh;
+  background-color: #0f172a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.hero {
+  max-width: 1000px;
+  width: 100%;
+  text-align: center;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.accent {
+  color: #3b82f6; 
+}
+
+.description {
+  font-size: 1.25rem;
+  color: #94a3b8; 
+  margin-bottom: 48px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.actions {
+  margin-bottom: 64px;
+  position: relative;
+  z-index: 10; 
+}
+
+.mainButton {
+  background-color: #3b82f6;
+  color: white;
+  padding: 16px 40px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+}
+
+.mainButton:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.featureCard {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.featureCard h3 {
+  color: #1e293b;
+  margin: 16px 0 8px;
+  font-size: 1.5rem;
+}
+
+.featureCard p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.icon {
+  font-size: 2rem;
+}

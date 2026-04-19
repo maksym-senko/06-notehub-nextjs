@@ -1,10 +1,25 @@
 'use client';
 
-export default function Error({ reset }: { error: Error; reset: () => void }) {
+
+interface ErrorProps {
+  error: Error;
+}
+
+export default function ErrorBoundary({ error }: ErrorProps) {
   return (
-    <div className="p-5 text-red-500">
-      <h2>Помилка завантаження нотатки!</h2>
-      <button onClick={() => reset()} className="mt-2 p-2 bg-white text-black">Спробувати знову</button>
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h2>Oops! Something went wrong.</h2>
+      
+      <p style={{ color: 'red', marginTop: '10px' }}>
+        {error.message || 'An unexpected error occurred while loading the note.'}
+      </p>
+
+      <button 
+        onClick={() => window.location.reload()}
+        style={{ marginTop: '20px', padding: '10px 20px', cursor: 'pointer' }}
+      >
+        Try again
+      </button>
     </div>
   );
 }

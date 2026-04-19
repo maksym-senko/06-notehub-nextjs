@@ -9,6 +9,7 @@
 
 .listItem {
   background-color: #ffffff;
+  color: #495057;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   padding: 16px;
@@ -17,6 +18,12 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
+  transition: transform 0.2s ease;
+}
+
+.listItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -37,13 +44,42 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 
+/* ФУТЕР ТА КНОПКИ — ОСНОВНІ ЗМІНИ ТУТ */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9; /* Лінія над кнопками */
+}
+
+.actions {
+  display: flex;
+  gap: 12px; /* Відступ між View Details та Delete */
+  align-items: center;
+}
+
+/* Стиль для посилання "View details" */
+.link {
+  font-size: 14px;
+  color: #0d6efd !important; /* Яскраво-синій */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Кнопка Delete */
 .button {
-  align-self: flex-end;
   padding: 6px 12px;
   font-size: 14px;
-  color: #fff;
+  color: #fff !important; /* Примусово білий текст */
   background-color: #dc3545;
   border: none;
   border-radius: 4px;
@@ -55,22 +91,16 @@
   background-color: #bb2d3b;
 }
 
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
 .tag {
   display: inline-block;
-  padding: 4px 8px;
+  padding: 4px 10px;
   font-size: 12px;
+  font-weight: 500;
   color: #0d6efd;
   background-color: #e7f1ff;
   border: 1px solid #b6d4fe;
   border-radius: 12px;
-  max-width: 100px;
+  max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
