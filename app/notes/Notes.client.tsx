@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/src/lib/api/noteApi';
-import NoteList from '@/src/components/NoteList/NoteList';
-import SearchBox from '@/src/components/SearchBox/SearchBox';
-import NoteForm from '@/src/components/NoteForm/NoteForm';
+import { fetchNotes } from '@/lib/api/noteApi';
+import NoteList from '@/components/NoteList/NoteList';
+import SearchBox from '@/components/SearchBox/SearchBox';
+import NoteForm from '@/components/NoteForm/NoteForm';
 
 function NotesClient() {
   const [filter, setFilter] = useState('');

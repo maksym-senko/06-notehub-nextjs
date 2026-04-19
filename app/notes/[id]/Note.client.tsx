@@ -1,7 +1,7 @@
 'use client';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { fetchNoteById } from '@/src/lib/api/noteApi';
+import { fetchNoteById } from '@/lib/api/noteApi';
 
 function NoteDetailsClient() {
   const params = useParams();
