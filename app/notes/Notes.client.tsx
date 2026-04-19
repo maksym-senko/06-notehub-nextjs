@@ -1,32 +1,70 @@
 'use client';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useDebounce } from 'use-debounce';
+import { fetchNotes } from '@/lib/api';
+import { Note } from '@/types/note';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
+import Pagination from '@/components/Pagination/Pagination';
+import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 
-function NotesClient() {
-  const [filter, setFilter] = useState('');
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['notes', filter],
-    queryFn: () => fetchNotes(1, 12, filter),
-  });
-
-  if (isLoading) return <p>Loading notes...</p>;
-  if (isError) return <p style={{ color: 'red' }}>Error loading notes. Check token in .env.local</p>;
-
-  const notesArray = data?.notes || [];
-
-  return (
-    <main style={{ padding: '20px' }}>
-      <h1>My Notes</h1>
-      <NoteForm onCancel={() => {}} /> 
-      <SearchBox value={filter} onChange={setFilter} />
-      <NoteList notes={notesArray} />
-    </main>
-  );
+interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
 }
 
-export default NotesClient;
+export default function NotesClient() {
+  const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const [debouncedSearch] = useDebounce(search, 500);
+
+  const { data, isLoading } = useQuery<NotesResponse>({
+    queryKey: ['notes', page, debouncedSearch],
+    queryFn: () => fetchNotes(page, 12, debouncedSearch),
+    placeholderData: keepPreviousData,
+  });
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handlePageChange = (selectedItem: { selected: number }) => {
+    setPage(selectedItem.selected + 1);
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <SearchBox value={search} onChange={handleSearchChange} />
+        <button onClick={() => setIsModalOpen(true)}>Add New Note</button>
+      </div>
+
+      {isLoading ? (
+        <p style={{ color: 'white' }}>Loading...</p>
+      ) : (
+        <>
+          <NoteList notes={data?.notes || []} />
+          
+          {data && data.totalPages > 0 && (
+            <Pagination 
+              pageCount={data.totalPages} 
+              onPageChange={handlePageChange} 
+              forcePage={page - 1} 
+            />
+          )}
+        </>
+      )}
+
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <NoteForm onCancel={() => setIsModalOpen(false)} />
+        </Modal>
+      )}
+    </div>
+  );
+}

@@ -1,21 +1,31 @@
 'use client';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '@/lib/';
+import { createNote } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
 import css from './NoteForm.module.css';
 
+interface NoteFormProps {
+  onCancel: () => void;
+}
+
+interface FormValues {
+  title: string;
+  content: string;
+  tag: NoteTag;
+}
+
 const validationSchema = Yup.object({
-  title: Yup.string().min(3).max(50).required('Required'),
-  content: Yup.string().max(500),
+  title: Yup.string().required('Required'),
+  content: Yup.string().required('Required'),
   tag: Yup.string().oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping']).required('Required'),
 });
 
-const NoteForm = ({ onCancel }: { onCancel: () => void }) => {
+export default function NoteForm({ onCancel }: NoteFormProps) {
   const queryClient = useQueryClient();
-
-  const { mutate, isPending } = useMutation({
+  
+  const mutation = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
@@ -23,27 +33,45 @@ const NoteForm = ({ onCancel }: { onCancel: () => void }) => {
     },
   });
 
+  const initialValues: FormValues = { 
+    title: '', 
+    content: '', 
+    tag: 'Todo' 
+  };
+
   return (
     <Formik
-      initialValues={{ title: '', content: '', tag: 'Todo' as NoteTag }}
+      initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={(values) => mutate(values)}
+      onSubmit={(values) => {
+        mutation.mutate(values);
+      }}
     >
       <Form className={css.form}>
-        <div className={css.formGroup}>
-          <label htmlFor="title" className={css.label}>Title</label>
-          <Field name="title" id="title" className={css.input} />
-          <ErrorMessage name="title" component="div" className={css.error} />
-        </div>
+        <Field name="title" placeholder="Title" className={css.input} />
+        
+        <Field 
+          name="content" 
+          as="textarea" 
+          placeholder="Content" 
+          className={css.textarea} 
+        />
+        
+        <Field name="tag" as="select" className={css.select}>
+          <option value="Todo">Todo</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Meeting">Meeting</option>
+          <option value="Shopping">Shopping</option>
+        </Field>
+
         <div className={css.actions}>
-          <button type="button" onClick={onCancel} className={css.cancelButton}>Cancel</button>
-          <button type="submit" disabled={isPending} className={css.submitButton}>
-            {isPending ? 'Creating...' : 'Create note'}
+          <button type="submit" disabled={mutation.isPending}>
+            {mutation.isPending ? 'Saving...' : 'Save'}
           </button>
+          <button type="button" onClick={onCancel}>Cancel</button>
         </div>
       </Form>
     </Formik>
   );
-};
-
-export default NoteForm;
+}
