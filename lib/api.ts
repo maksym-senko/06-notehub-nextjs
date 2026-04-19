@@ -21,11 +21,16 @@ export interface FetchNotesResponse {
 const fetchNotes = async (
   page: number = 1,
   perPage: number = 12,
-  search: string = "",
+  search: string = ""
 ): Promise<FetchNotesResponse> => {
   const { data } = await noteInstance.get<FetchNotesResponse>("/notes", {
     params: { page, perPage, search },
   });
+  return data;
+};
+
+const fetchNoteById = async (id: string): Promise<Note> => {
+  const { data } = await noteInstance.get<Note>(`/notes/${id}`);
   return data;
 };
 
@@ -43,4 +48,4 @@ const deleteNote = async (id: string): Promise<Note> => {
   return data;
 };
 
-export { fetchNotes, createNote, deleteNote };
+export { fetchNotes, fetchNoteById, createNote, deleteNote };
