@@ -15,10 +15,12 @@ interface FormValues {
 
 const validationSchema = Yup.object({
   title: Yup.string()
+    .min(3, 'Title must be at least 3 characters') 
+    .max(50, 'Title must be at most 50 characters') 
     .required('Title is required'),
   content: Yup.string()
     .max(500, 'Content must be at most 500 characters')
-    .optional(),
+    .notRequired(),
   tag: Yup.string()
     .oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'])
     .required('Tag is required'),
@@ -57,7 +59,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
         <Form className={css.form}>
           <div className={css.fieldGroup}>
             <label htmlFor="title">Title</label>
-            <Field name="title" className={css.input} />
+            <Field name="title" id="title" className={css.input} />
             <ErrorMessage name="title" component="div" className={css.error} />
           </div>
 
@@ -65,6 +67,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
             <label htmlFor="content">Content (optional)</label>
             <Field 
               name="content" 
+              id="content"
               as="textarea" 
               className={css.textarea} 
               placeholder="Max 500 characters..."
@@ -74,7 +77,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
 
           <div className={css.fieldGroup}>
             <label htmlFor="tag">Tag</label>
-            <Field name="tag" as="select" className={css.select}>
+            <Field name="tag" id="tag" as="select" className={css.select}>
               <option value="Todo">Todo</option>
               <option value="Work">Work</option>
               <option value="Personal">Personal</option>
