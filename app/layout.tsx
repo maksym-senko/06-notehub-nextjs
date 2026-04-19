@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
-import { TanStackProvider } from "@/components/TanStackProvider/TanStackProvider";
+import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Next.js Note Application",
 };
 
-function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
@@ -20,9 +20,9 @@ function RootLayout({ children }: { children: React.ReactNode }) {
             <Footer />
           </div>
         </TanStackProvider>
+
+        <div id="modal-root"></div>
       </body>
     </html>
   );
 }
-
-export default RootLayout;

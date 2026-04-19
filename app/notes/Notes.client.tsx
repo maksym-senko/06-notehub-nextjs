@@ -3,17 +3,12 @@ import { useState } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { fetchNotes } from '@/lib/api';
-import { Note } from '@/types/note';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import Modal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 
-interface NotesResponse {
-  notes: Note[];
-  totalPages: number;
-}
 
 export default function NotesClient() {
   const [page, setPage] = useState<number>(1);
@@ -22,13 +17,13 @@ export default function NotesClient() {
 
   const [debouncedSearch] = useDebounce(search, 500);
 
-  const { data, isLoading } = useQuery<NotesResponse>({
+  const { data, isLoading } = useQuery({
     queryKey: ['notes', page, debouncedSearch],
     queryFn: () => fetchNotes(page, 12, debouncedSearch),
     placeholderData: keepPreviousData,
   });
 
-  const handleSearchChange = (value: string) => {
+  const handleSearch = (value: string) => {
     setSearch(value);
     setPage(1);
   };
@@ -39,18 +34,23 @@ export default function NotesClient() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <SearchBox value={search} onChange={handleSearchChange} />
-        <button onClick={() => setIsModalOpen(true)}>Add New Note</button>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', alignItems: 'center' }}>
+        <SearchBox value={search} onChange={handleSearch} />
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          style={{ padding: '10px 20px', cursor: 'pointer' }}
+        >
+          Add Note
+        </button>
       </div>
 
-      {isLoading ? (
-        <p style={{ color: 'white' }}>Loading...</p>
+      {isLoading && !data ? (
+        <p>Loading...</p>
       ) : (
         <>
           <NoteList notes={data?.notes || []} />
           
-          {data && data.totalPages > 0 && (
+          {data && data.totalPages > 1 && (
             <Pagination 
               pageCount={data.totalPages} 
               onPageChange={handlePageChange} 

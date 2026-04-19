@@ -1,46 +1,59 @@
-import { useEffect, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import css from "./Modal.module.css";
+'use client';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import css from './Modal.module.css';
 
 interface ModalProps {
-  children: ReactNode;
+  children: React.ReactNode;
   onClose: () => void;
 }
 
-const Modal = ({ children, onClose }: ModalProps) => {
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
+export default function Modal({ children, onClose }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Escape") onClose();
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleEsc);
+    document.body.style.overflow = 'hidden';
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      cancelAnimationFrame(frame);
+      window.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'unset';
     };
   }, [onClose]);
 
-  const modalRoot = document.querySelector("#modal-root");
+  if (!mounted) return null;
 
+  const modalRoot = document.getElementById('modal-root');
+  
   if (!modalRoot) {
-    console.error("Помилка: #modal-root не знайдено в index.html");
     return null;
   }
 
   return createPortal(
-    <div
-      className={css.backdrop}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className={css.modal}>{children}</div>
+    <div className={css.backdrop} onClick={onClose}>
+      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
+        <button 
+          className={css.closeBtn} 
+          onClick={onClose} 
+          type="button"
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
+        {children}
+      </div>
     </div>,
-    modalRoot,
+    modalRoot
   );
-};
-
-export default Modal;
+}

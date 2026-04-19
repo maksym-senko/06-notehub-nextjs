@@ -1,5 +1,5 @@
 'use client';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNote } from '@/lib/api';
@@ -17,8 +17,8 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object({
-  title: Yup.string().required('Required'),
-  content: Yup.string().required('Required'),
+  title: Yup.string().min(3, 'Too short!').required('Required'),
+  content: Yup.string().min(5, 'Too short!').required('Required'),
   tag: Yup.string().oneOf(['Todo', 'Work', 'Personal', 'Meeting', 'Shopping']).required('Required'),
 });
 
@@ -44,34 +44,47 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        mutation.mutate(values);
+        mutation.mutate(values as FormValues);
       }}
     >
-      <Form className={css.form}>
-        <Field name="title" placeholder="Title" className={css.input} />
-        
-        <Field 
-          name="content" 
-          as="textarea" 
-          placeholder="Content" 
-          className={css.textarea} 
-        />
-        
-        <Field name="tag" as="select" className={css.select}>
-          <option value="Todo">Todo</option>
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Meeting">Meeting</option>
-          <option value="Shopping">Shopping</option>
-        </Field>
+      {({ errors, touched }) => (
+        <Form className={css.form}>
+          <div className={css.fieldGroup}>
+            <Field name="title" placeholder="Title" className={css.input} />
+            <ErrorMessage name="title" component="div" className={css.error} />
+          </div>
+          
+          <div className={css.fieldGroup}>
+            <Field 
+              name="content" 
+              as="textarea" 
+              placeholder="Content" 
+              className={css.textarea} 
+            />
+            <ErrorMessage name="content" component="div" className={css.error} />
+          </div>
+          
+          <div className={css.fieldGroup}>
+            <Field name="tag" as="select" className={css.select}>
+              <option value="Todo">Todo</option>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Shopping">Shopping</option>
+            </Field>
+            <ErrorMessage name="tag" component="div" className={css.error} />
+          </div>
 
-        <div className={css.actions}>
-          <button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Saving...' : 'Save'}
-          </button>
-          <button type="button" onClick={onCancel}>Cancel</button>
-        </div>
-      </Form>
+          <div className={css.actions}>
+            <button type="submit" disabled={mutation.isPending} className={css.submitBtn}>
+              {mutation.isPending ? 'Saving...' : 'Save'}
+            </button>
+            <button type="button" onClick={onCancel} className={css.cancelBtn}>
+              Cancel
+            </button>
+          </div>
+        </Form>
+      )}
     </Formik>
   );
 }
